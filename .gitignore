@@ -1,2 +1,4 @@
+python/*.egg-info
+python/*/__pycache__
 data/*.parquet
 data/*.json
