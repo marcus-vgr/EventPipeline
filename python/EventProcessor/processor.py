@@ -26,18 +26,6 @@ class DataProcessor:
 
 
     def run(self):
-        if self.method == "py":
-            self._py_run()
-
-    def _py_filter_dataframe(self, dataframe: pd.DataFrame):
-        dataframe["radius"] = np.sqrt(dataframe["x"]**2 + dataframe["y"]**2)
-        dataframe["momentum_proxy"] = dataframe["energy"] / (dataframe["radius"] + self.EPSILON)
-        dataframe["time_residual"] = dataframe["timestamp"] - dataframe.groupby("detector_id")["timestamp"].transform("mean")
-        dataframe["passFilter"] = (dataframe["momentum_proxy"] >= self.momentum_min) & (dataframe["momentum_proxy"] <= self.momentum_max) & (dataframe["radius"] <= self.radius_max)
-        
-        dataframe.query("passFilter", inplace=True)
-
-    def _py_run(self):
 
         tInit = time.time()
 
@@ -51,7 +39,19 @@ class DataProcessor:
         
             df = df.to_pandas()
             nEventsTotal += len(df)
-            self._py_filter_dataframe(df)
+            
+            if self.method == "py":
+                new_cols = self._py_newvars_dataframe(df)
+                for col,arr in new_cols.items():
+                    df[col] = arr
+                isValid = self._py_filter_dataframe(df)
+            else:
+                new_cols = self._cpp_newvars_dataframe(df)
+                for col,arr in new_cols.keys():
+                    df[col] = arr
+                isValid = self._cpp_filter_dataframe(df)
+            
+            df = df.loc[isValid]
             nEventsFilter += len(df)
         
             table = pa.Table.from_pandas(df)
@@ -64,3 +64,20 @@ class DataProcessor:
         print("NEventsInit: ", nEventsTotal, "| NEventsFiltered: ", nEventsFilter, f"|| Efficiency: {nEventsFilter/nEventsTotal * 100:.2f}%")
         timeRunning = time.time() - tInit
         print(f"Script run in {timeRunning:.2f}s.")
+
+    def _py_newvars_dataframe(self, dataframe: pd.DataFrame):
+        new_vars = {}
+        new_vars["radius"] = np.sqrt(dataframe["x"]**2 + dataframe["y"]**2)
+        new_vars["momentum_proxy"] = dataframe["energy"] / (new_vars["radius"] + self.EPSILON)
+        new_vars["time_residual"] = dataframe["timestamp"] - dataframe.groupby("detector_id")["timestamp"].transform("mean")
+        return new_vars
+
+    def _py_filter_dataframe(self, dataframe: pd.DataFrame):
+        return (dataframe["momentum_proxy"] >= self.momentum_min) & (dataframe["momentum_proxy"] <= self.momentum_max) & (dataframe["radius"] <= self.radius_max)
+
+
+    def _cpp_newvars_dataframe(self, dataframe: pd.DataFrame):
+        ...
+
+    def _cpp_filter_dataframe(self, dataframe: pd.DataFrame):
+        ...
