@@ -16,7 +16,7 @@ python -m venv .venv
 pip install -e .
 ```
 
-Otherwise you just ahve to source it:
+Otherwise you just have to source it:
 ```
 source .venv/bin/activate
 ```
