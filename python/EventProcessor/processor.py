@@ -3,7 +3,7 @@ import pyarrow.parquet as pq
 import pyarrow as pa
 import pandas as pd
 import numpy as np
-
+from EventProcessor import _processor
 
 class DataProcessor:
 
@@ -24,6 +24,9 @@ class DataProcessor:
         self.EPSILON = 1e-6
         self.BATCHSIZE = 5000
 
+    def test(self):
+        a = _processor.add(2,3)
+        print(a)
 
     def run(self):
 
