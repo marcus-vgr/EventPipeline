@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "EventPipeline"
+version = "0.1.0"
+description = "High-performance event data processing pipeline"
+readme = "README.md"
+requires-python = ">=3.13"
+
+dependencies = [
+    "numpy",
+    "pandas",
+    "pyarrow==19.0.1",
+]
+
+[tool.setuptools]
+package-dir = {"" = "python"}
+
+[tool.setuptools.packages.find]
+where = ["python"]
