@@ -22,7 +22,7 @@ std::map<std::string, py::array_t<float>> compute_newvars(py::array_t<float> _x,
 
     for(int i = 0; i < nrows; i++){
         _radius(i) = std::sqrt(  x(i)*x(i) + y(i)*y(i) );
-        _momentum_proxy(i) = energy(i) / (_radius[i] + epsilon);
+        _momentum_proxy(i) = energy(i) / (_radius(i) + epsilon);
     }
 
     // Gotta add time_residual!
