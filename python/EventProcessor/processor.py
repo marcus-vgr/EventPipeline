@@ -50,17 +50,20 @@ class DataProcessor:
                 isValid = self._py_filter_dataframe(df)
             else:
                 new_cols = self._cpp_newvars_dataframe(df)
-                for col,arr in new_cols.keys():
+                print(new_cols.keys())
+                for col,arr in new_cols.items():
                     df[col] = arr
                 isValid = self._cpp_filter_dataframe(df)
             
-            df = df.loc[isValid]
+            #df = df.loc[isValid]
             nEventsFilter += len(df)
         
             table = pa.Table.from_pandas(df)
             if writer is None:
                 writer = pq.ParquetWriter(self.ofile, table.schema)
             writer.write_table(table)
+
+            print(df.head()); break
         
         writer.close()
         
@@ -80,7 +83,8 @@ class DataProcessor:
 
 
     def _cpp_newvars_dataframe(self, dataframe: pd.DataFrame):
-        ...
-
+        new_vars = _processor.compute_newvars(dataframe["x"], dataframe["y"], dataframe["energy"], self.EPSILON)
+        return new_vars
+    
     def _cpp_filter_dataframe(self, dataframe: pd.DataFrame):
-        ...
+        return None
