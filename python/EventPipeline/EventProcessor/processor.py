@@ -11,7 +11,9 @@ class DataProcessor:
         self.ifile = ifile
         self.ofile = ofile
         if self.ofile is None:
-            self.ofile = self.ifile.replace(".parquet", "_filtered.parquet")
+            self.ofile = self.ifile.replace(".parquet", f"_filtered_{method}.parquet")
+        if not self.ofile.endswith(".parquet"):
+            self.ofile += ".parquet"
         self.method = method
         print("Input: ", self.ifile)
         print("Output: ", self.ofile)
