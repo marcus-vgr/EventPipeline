@@ -1,5 +1,13 @@
-python/*.egg-info
-python/*/*/__pycache__
-python/*/*/_*.so
+# Python packaging
+*.egg-info/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Compiled extensions (pybind11 / C++)
+_*.so
+
+# Data products
 data/*.parquet
-data/*.json
+
