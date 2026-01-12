@@ -40,11 +40,24 @@ std::map<std::string, py::array_t<float>> compute_newvars(py::array_t<float> x, 
 
 }
 
-// Gotta add filter
+std::vector<bool> compute_filter(py::array_t<float> radius, py::array_t<float> momentum_proxy, float momentum_min, float momentum_max, float radius_max){
+
+    auto radius_view = radius.unchecked<1>();
+    auto momentum_proxy_view = momentum_proxy.unchecked<1>();
+    const int nrows = radius_view.shape(0);
+    
+    std::vector<bool> isValid(nrows, 0);
+    for(int i = 0; i < nrows; i++){
+        if( (momentum_proxy_view(i) >= momentum_min) && (momentum_proxy_view(i) <= momentum_max) && (radius_view(i) <= radius_max) ) isValid[i] = 1;
+    }
+
+    return isValid;
+}
 
 
 // Python module definition
 PYBIND11_MODULE(_processor, m) {
     m.doc() = "C++ extension for EventProcessor";
-    m.def("compute_newvars", &compute_newvars, "A function compute new variables for the dataframe");
+    m.def("compute_newvars", &compute_newvars, "A function to compute new variables for the dataframe");
+    m.def("compute_filter", &compute_filter, "A function to apply filter to the dataframe");
 }

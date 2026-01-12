@@ -50,26 +50,24 @@ class DataProcessor:
                 isValid = self._py_filter_dataframe(df)
             else:
                 new_cols = self._cpp_newvars_dataframe(df)
-                print(new_cols.keys())
                 for col,arr in new_cols.items():
                     df[col] = arr
                 isValid = self._cpp_filter_dataframe(df)
             
-            #df = df.loc[isValid]
+            df = df.loc[isValid]
             nEventsFilter += len(df)
         
             table = pa.Table.from_pandas(df)
             if writer is None:
                 writer = pq.ParquetWriter(self.ofile, table.schema)
             writer.write_table(table)
-
-            print(df.head()); break
-        
+    
         writer.close()
         
         print("NEventsInit: ", nEventsTotal, "| NEventsFiltered: ", nEventsFilter, f"|| Efficiency: {nEventsFilter/nEventsTotal * 100:.2f}%")
         timeRunning = time.time() - tInit
         print(f"Script run in {timeRunning:.2f}s.")
+        
 
     def _py_newvars_dataframe(self, dataframe: pd.DataFrame):
         new_vars = {}
@@ -81,10 +79,9 @@ class DataProcessor:
     def _py_filter_dataframe(self, dataframe: pd.DataFrame):
         return (dataframe["momentum_proxy"] >= self.momentum_min) & (dataframe["momentum_proxy"] <= self.momentum_max) & (dataframe["radius"] <= self.radius_max)
 
-
     def _cpp_newvars_dataframe(self, dataframe: pd.DataFrame):
         new_vars = _processor.compute_newvars(dataframe["x"], dataframe["y"], dataframe["energy"], dataframe["timestamp"], dataframe["detector_id"], self.EPSILON)
         return new_vars
     
     def _cpp_filter_dataframe(self, dataframe: pd.DataFrame):
-        return None
+        return _processor.compute_filter(dataframe["radius"], dataframe["momentum_proxy"], self.momentum_min, self.momentum_max, self.radius_max)
