@@ -83,7 +83,7 @@ class DataProcessor:
 
 
     def _cpp_newvars_dataframe(self, dataframe: pd.DataFrame):
-        new_vars = _processor.compute_newvars(dataframe["x"], dataframe["y"], dataframe["energy"], self.EPSILON)
+        new_vars = _processor.compute_newvars(dataframe["x"], dataframe["y"], dataframe["energy"], dataframe["timestamp"], dataframe["detector_id"], self.EPSILON)
         return new_vars
     
     def _cpp_filter_dataframe(self, dataframe: pd.DataFrame):
