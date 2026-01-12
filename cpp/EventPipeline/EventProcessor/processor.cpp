@@ -8,7 +8,7 @@
 
 namespace py = pybind11;
 
-std::map<std::string, py::array_t<float>> compute_newvars(py::array_t<float> x, py::array_t<float> y, py::array_t<float> energy, py::array_t<float> timestamp, py::array_t<int> detector_id, float epsilon){
+std::map<std::string, py::array_t<double>> compute_newvars(py::array_t<double> x, py::array_t<double> y, py::array_t<double> energy, py::array_t<double> timestamp, py::array_t<int> detector_id, double epsilon){
     auto x_view = x.unchecked<1>();
     auto y_view = y.unchecked<1>();
     auto energy_view = energy.unchecked<1>();
@@ -16,15 +16,15 @@ std::map<std::string, py::array_t<float>> compute_newvars(py::array_t<float> x, 
     auto detector_id_view = detector_id.unchecked<1>();
     const int nrows = x_view.shape(0);
 
-    py::array_t<float> radius(nrows);
-    py::array_t<float> momentum_proxy(nrows); 
-    py::array_t<float> time_residual(nrows);
+    py::array_t<double> radius(nrows);
+    py::array_t<double> momentum_proxy(nrows); 
+    py::array_t<double> time_residual(nrows);
     auto radius_view = radius.mutable_unchecked<1>();
     auto momentum_proxy_view = momentum_proxy.mutable_unchecked<1>();
     auto time_residual_view = time_residual.mutable_unchecked<1>();
 
     // collect info to calculate timestamp mean per detector_id
-    std::map<int, std::pair<float, int>> m_timestamp_avg;
+    std::map<int, std::pair<double, int>> m_timestamp_avg;
     for(int i = 0; i < nrows; i++){
         m_timestamp_avg[ detector_id_view(i) ].first += timestamp_view(i);
         m_timestamp_avg[ detector_id_view(i) ].second += 1;
@@ -40,7 +40,7 @@ std::map<std::string, py::array_t<float>> compute_newvars(py::array_t<float> x, 
 
 }
 
-std::vector<bool> compute_filter(py::array_t<float> radius, py::array_t<float> momentum_proxy, float momentum_min, float momentum_max, float radius_max){
+std::vector<bool> compute_filter(py::array_t<double> radius, py::array_t<double> momentum_proxy, double momentum_min, double momentum_max, double radius_max){
 
     auto radius_view = radius.unchecked<1>();
     auto momentum_proxy_view = momentum_proxy.unchecked<1>();
