@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 
-from EventProcessor.processor import DataProcessor
+from EventPipeline.EventProcessor.processor import DataProcessor
 
 parser = ArgumentParser(prog="process_events.py", description="Script to process events")
 parser.add_argument("-i", "--input", type=str, required=True, help="<path/to/input.parquet>")

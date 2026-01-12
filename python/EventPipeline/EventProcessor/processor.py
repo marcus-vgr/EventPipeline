@@ -3,7 +3,7 @@ import pyarrow.parquet as pq
 import pyarrow as pa
 import pandas as pd
 import numpy as np
-from EventProcessor import _processor
+from EventPipeline.EventProcessor import _processor
 
 class DataProcessor:
 

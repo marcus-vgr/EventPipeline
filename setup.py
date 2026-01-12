@@ -5,8 +5,8 @@ from setuptools import find_packages
 # Define the C++ extension
 ext_modules = [
     Extension(
-        "EventProcessor._processor",                     
-        ["cpp/EventProcessor/processor.cpp"],     
+        "EventPipeline.EventProcessor._processor",                     
+        ["cpp/EventPipeline/EventProcessor/processor.cpp"],     
         include_dirs=[pybind11.get_include()],
         language="c++",
     )
