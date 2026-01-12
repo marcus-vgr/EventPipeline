@@ -25,7 +25,7 @@ class DataGenerator:
     def generate_chunck(self, start_id: int, size: int):
         return {
             "event_id": np.arange(start_id, start_id+size, dtype=np.int64),
-            "timestamp": np.random.uniform(0,1000,size=size).astype(np.float64),
+            "timestamp": np.random.uniform(0,1000,size=size).astype(np.float32),
             "x": np.random.normal(0,100,size=size).astype(np.float32),
             "y": np.random.normal(0,100,size=size).astype(np.float32),
             "energy": np.random.exponential(scale=15,size=size).astype(np.float32),
