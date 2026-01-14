@@ -26,16 +26,15 @@ jobs:
       - name: Install all dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e .  # install your package in editable mode
-          pip install pytest numpy pandas pyarrow  # any extra for CI
+          pip install -e .
 
       #processing scripts py and cpp
       - name: Run processing scripts
         run: |
-          python scripts/process_events.py -i data/dummy.parquet -o output_py.parquet -m py
-          python scripts/process_events.py -i data/dummy.parquet -o output_cpp.parquet -m cpp
+          python scripts/process_events.py -i .github/data/dummy.parquet -o output_py.parquet -m py
+          python scripts/process_events.py -i .github/data/dummy.parquet -o output_cpp.parquet -m cpp
 
       #Compare py and cpp outputs
       - name: Compare outputs
         run: |
-          python -c 'from common.parquetComparison import areFilesIdentical; areFilesIdentical("output_py.parquet","output_cpp.parquet")'
+          python -c 'from common.parquetComparison import areFilesIdentical; areFilesIdentical("output_py.parquet","output_cpp.parquet",throwError=True)'
