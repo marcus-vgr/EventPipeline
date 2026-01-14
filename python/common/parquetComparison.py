@@ -1,6 +1,6 @@
 import pyarrow.parquet as pq
 
-def areFilesIdentical(ifile1: str, ifile2: str, batchsize: int = 100, tolerance: float = 1e-3) -> bool:
+def areFilesIdentical(ifile1: str, ifile2: str, batchsize: int = 100, tolerance: float = 1e-3, throwError: bool = False) -> bool:
 
     f1 = pq.ParquetFile(ifile1)
     f2 = pq.ParquetFile(ifile2)
@@ -15,6 +15,8 @@ def areFilesIdentical(ifile1: str, ifile2: str, batchsize: int = 100, tolerance:
 
         for col in ratio.columns:
             if (ratio[col].max() > (1 + tolerance)) or (ratio[col].min() < (1-tolerance)):
+                if throwError:
+                    raise Exception("Files are not equivalent!")
                 return False 
         return True
 
